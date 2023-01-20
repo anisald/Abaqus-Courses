@@ -1,0 +1,32 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=200.0)
+mdb.models['Model-1'].sketches['__profile__'].rectangle(point1=(50.0, 50.0), 
+    point2=(-50.0, -50.0))
+mdb.models['Model-1'].Part(dimensionality=THREE_D, name='Crasher', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Crasher'].BaseShell(sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.models['Model-1'].parts['Crasher'].ReferencePoint(point=(0.0, 0.0, 0.0))
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=200.0)
+mdb.models['Model-1'].sketches['__profile__'].CircleByCenterPerimeter(center=(
+    0.0, 0.0), point1=(40.0, 0.0))
+mdb.models['Model-1'].Part(dimensionality=THREE_D, name='Tin-Can', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Tin-Can'].BaseShellExtrude(depth=80.0, sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+# Save by hp on 2018_09_23-13.03.56; build 6.14-2 2014_08_22-18.30.46 134497
