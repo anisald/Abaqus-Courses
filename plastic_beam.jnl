@@ -1,0 +1,217 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=200.0)
+mdb.models['Model-1'].sketches['__profile__'].rectangle(point1=(-50.0, 5.0), 
+    point2=(50.0, -5.0))
+mdb.models['Model-1'].Part(dimensionality=TWO_D_PLANAR, name='beam', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['beam'].BaseShell(sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.models['Model-1'].Material(name='steel')
+mdb.models['Model-1'].materials['steel'].Elastic(table=((210830000000.0, 0.3), 
+    ))
+mdb.models['Model-1'].materials['steel'].Plastic(table=((200200000.0, 0.0), (
+    246000000.0, 0.02374), (294000000.0, 0.04784), (374000000.0, 0.09436), (
+    437000000.0, 0.1388), (480000000.0, 0.1814)))
+mdb.models['Model-1'].HomogeneousSolidSection(material='steel', name=
+    'PlaneStressProperties', thickness=5.0)
+mdb.models['Model-1'].parts['beam'].SectionAssignment(offset=0.0, offsetField=
+    '', offsetType=MIDDLE_SURFACE, region=Region(
+    faces=mdb.models['Model-1'].parts['beam'].faces.getSequenceFromMask(mask=(
+    '[#1 ]', ), )), sectionName='PlaneStressProperties', thicknessAssignment=
+    FROM_SECTION)
+mdb.models['Model-1'].rootAssembly.DatumCsysByDefault(CARTESIAN)
+mdb.models['Model-1'].rootAssembly.Instance(dependent=ON, name='beam-1', part=
+    mdb.models['Model-1'].parts['beam'])
+mdb.models['Model-1'].StaticStep(initialInc=0.05, maxInc=0.2, minInc=2e-05, 
+    name='Step-1', previous='Initial', timePeriod=2.0)
+mdb.models['Model-1'].EncastreBC(createStepName='Step-1', localCsys=None, name=
+    'Fixed', region=Region(
+    edges=mdb.models['Model-1'].rootAssembly.instances['beam-1'].edges.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+mdb.models['Model-1'].TabularAmplitude(data=((0.0, 0.0), (1.0, 1.0), (2.0, 
+    0.0)), name='Amp-1', smooth=SOLVER_DEFAULT, timeSpan=STEP)
+mdb.models['Model-1'].SurfaceTraction(amplitude='Amp-1', createStepName=
+    'Step-1', directionVector=(
+    mdb.models['Model-1'].rootAssembly.instances['beam-1'].vertices[0], 
+    mdb.models['Model-1'].rootAssembly.instances['beam-1'].vertices[3]), 
+    distributionType=UNIFORM, field='', localCsys=None, magnitude=5000000.0, 
+    name='Load-1', region=Region(
+    side1Edges=mdb.models['Model-1'].rootAssembly.instances['beam-1'].edges.getSequenceFromMask(
+    mask=('[#8 ]', ), )))
+mdb.models['Model-1'].parts['beam'].setElementType(elemTypes=(ElemType(
+    elemCode=CPS8R, elemLibrary=STANDARD), ElemType(elemCode=CPS6M, 
+    elemLibrary=STANDARD)), regions=(
+    mdb.models['Model-1'].parts['beam'].faces.getSequenceFromMask(('[#1 ]', ), 
+    ), ))
+mdb.models['Model-1'].parts['beam'].setMeshControls(elemShape=QUAD, regions=
+    mdb.models['Model-1'].parts['beam'].faces.getSequenceFromMask(('[#1 ]', ), 
+    ), technique=STRUCTURED)
+mdb.models['Model-1'].parts['beam'].seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].parts['beam'].edges.getSequenceFromMask(('[#f ]', ), 
+    ), number=8)
+mdb.models['Model-1'].parts['beam'].deleteSeeds(regions=
+    mdb.models['Model-1'].parts['beam'].edges.getSequenceFromMask(('[#f ]', ), 
+    ))
+mdb.models['Model-1'].parts['beam'].seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].parts['beam'].edges.getSequenceFromMask(('[#a ]', ), 
+    ), number=8)
+mdb.models['Model-1'].parts['beam'].seedEdgeByBias(biasMethod=SINGLE, 
+    constraint=FINER, end1Edges=
+    mdb.models['Model-1'].parts['beam'].edges.getSequenceFromMask(('[#4 ]', ), 
+    ), end2Edges=mdb.models['Model-1'].parts['beam'].edges.getSequenceFromMask(
+    ('[#1 ]', ), ), number=50, ratio=2.0)
+mdb.models['Model-1'].parts['beam'].generateMesh()
+mdb.models['Model-1'].rootAssembly.regenerate()
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Model-1', modelPrint=OFF, 
+    multiprocessingMode=DEFAULT, name='plastic_beam', nodalOutputPrecision=
+    SINGLE, numCpus=1, numGPUs=0, queue=None, resultsFormat=ODB, scratch='', 
+    type=ANALYSIS, userSubroutine='', waitHours=0, waitMinutes=0)
+mdb.jobs['plastic_beam'].submit(consistencyChecking=OFF)
+mdb.jobs['plastic_beam']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'clientHost': 'Soroosh', 'handle': 0, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(WARNING, {'phase': BATCHPRE_PHASE, 
+    'message': 'FOR TWO-DIMENSIONAL MODELS, IF A NON-UNITY THICKNESS IS SPECIFIED FOR TWO-DIMENSIONAL SOLID ELEMENTS AND THESE ELEMENTS ARE INVOLVED IN AN INTERACTION SUCH AS CONTACT, THE SAME THICKNESS SHOULD BE SPECIFIED FOR THE OUT-OF-PLANE THICKNESS OF THE CORRESPONDING SURFACE UNDER *SURFACE INTERACTION.', 
+    'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(ODB_FILE, {'phase': BATCHPRE_PHASE, 
+    'file': 'E:\\installed software\\ABAQUS\\temp\\plastic_beam.odb', 
+    'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(COMPLETED, {'phase': BATCHPRE_PHASE, 
+    'message': 'Analysis phase complete', 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STARTED, {'phase': STANDARD_PHASE, 
+    'clientHost': 'Soroosh', 'handle': 5492, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STEP, {'phase': STANDARD_PHASE, 'stepId': 1, 
+    'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 0, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(MEMORY_ESTIMATE, {'phase': STANDARD_PHASE, 
+    'jobName': 'plastic_beam', 'memory': 26.0})
+mdb.jobs['plastic_beam']._Message(PHYSICAL_MEMORY, {'phase': STANDARD_PHASE, 
+    'physical_memory': 12204.0, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(MINIMUM_MEMORY, {'minimum_memory': 17.0, 
+    'phase': STANDARD_PHASE, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 1, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 0.05, 'attempts': 1, 
+    'timeIncrement': 0.05, 'increment': 1, 'stepTime': 0.05, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 2, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 0.1, 'attempts': 1, 
+    'timeIncrement': 0.05, 'increment': 2, 'stepTime': 0.1, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 3, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 0.175, 'attempts': 1, 
+    'timeIncrement': 0.075, 'increment': 3, 'stepTime': 0.175, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 4, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 0.2875, 'attempts': 1, 
+    'timeIncrement': 0.1125, 'increment': 4, 'stepTime': 0.2875, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 5, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 0.45625, 'attempts': 1, 
+    'timeIncrement': 0.16875, 'increment': 5, 'stepTime': 0.45625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 6, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 0.65625, 'attempts': 1, 
+    'timeIncrement': 0.2, 'increment': 6, 'stepTime': 0.65625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 7, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 0.85625, 'attempts': 1, 
+    'timeIncrement': 0.2, 'increment': 7, 'stepTime': 0.85625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 3, 
+    'phase': STANDARD_PHASE, 'equilibrium': 3})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 8, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.05625, 'attempts': 1, 
+    'timeIncrement': 0.2, 'increment': 8, 'stepTime': 1.05625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 4, 
+    'phase': STANDARD_PHASE, 'equilibrium': 4})
+mdb.jobs['plastic_beam']._Message(WARNING, {'phase': STANDARD_PHASE, 
+    'message': 'THE STRAIN INCREMENT HAS EXCEEDED FIFTY TIMES THE STRAIN TO CAUSE FIRST YIELD AT 38 POINTS', 
+    'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(WARNING, {'phase': STANDARD_PHASE, 
+    'message': 'THE STRAIN INCREMENT HAS EXCEEDED FIFTY TIMES THE STRAIN TO CAUSE FIRST YIELD AT 16 POINTS', 
+    'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(WARNING, {'phase': STANDARD_PHASE, 
+    'message': 'THE STRAIN INCREMENT HAS EXCEEDED FIFTY TIMES THE STRAIN TO CAUSE FIRST YIELD AT 146 POINTS', 
+    'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.05625, 
+    'attempts': ' 1U', 'timeIncrement': 0.2, 'increment': 9, 
+    'stepTime': 1.05625, 'step': 1, 'jobName': 'plastic_beam', 'severe': 0, 
+    'iterations': 4, 'phase': STANDARD_PHASE, 'equilibrium': 4})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 9, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.10625, 'attempts': 2, 
+    'timeIncrement': 0.05, 'increment': 9, 'stepTime': 1.10625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 2, 
+    'phase': STANDARD_PHASE, 'equilibrium': 2})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 10, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.18125, 'attempts': 1, 
+    'timeIncrement': 0.075, 'increment': 10, 'stepTime': 1.18125, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 11, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.29375, 'attempts': 1, 
+    'timeIncrement': 0.1125, 'increment': 11, 'stepTime': 1.29375, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 12, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.4625, 'attempts': 1, 
+    'timeIncrement': 0.16875, 'increment': 12, 'stepTime': 1.4625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 13, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.6625, 'attempts': 1, 
+    'timeIncrement': 0.2, 'increment': 13, 'stepTime': 1.6625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 14, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 1.8625, 'attempts': 1, 
+    'timeIncrement': 0.2, 'increment': 14, 'stepTime': 1.8625, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(ODB_FRAME, {'phase': STANDARD_PHASE, 
+    'step': 0, 'frame': 15, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(STATUS, {'totalTime': 2.0, 'attempts': 1, 
+    'timeIncrement': 0.1375, 'increment': 15, 'stepTime': 2.0, 'step': 1, 
+    'jobName': 'plastic_beam', 'severe': 0, 'iterations': 1, 
+    'phase': STANDARD_PHASE, 'equilibrium': 1})
+mdb.jobs['plastic_beam']._Message(END_STEP, {'phase': STANDARD_PHASE, 
+    'stepId': 1, 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(COMPLETED, {'phase': STANDARD_PHASE, 
+    'message': 'Analysis phase complete', 'jobName': 'plastic_beam'})
+mdb.jobs['plastic_beam']._Message(JOB_COMPLETED, {
+    'time': 'Mon Dec 31 14:16:33 2018', 'jobName': 'plastic_beam'})
+# Save by Soroosh on 2018_12_31-14.21.26; build 2018 2017_11_07-20.51.41 127140
