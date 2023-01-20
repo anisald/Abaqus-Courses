@@ -1,0 +1,5 @@
+# Save by Soroosh on 2018_11_11-12.02.09; build 2018 2017_11_07-20.51.41 127140
+from abaqus import *
+upgradeMdb('E:/ABAQUS/9.Mechanichal changes in Funnel/Funnel-6.14-2.cae', 
+    'E:/ABAQUS/9.Mechanichal changes in Funnel/Funnel.cae')
+# Save by Soroosh on 2018_11_11-12.02.09; build 2018 2017_11_07-20.51.41 127140

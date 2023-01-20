@@ -1,0 +1,173 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=200.0)
+mdb.models['Model-1'].sketches['__profile__'].ConstructionLine(point1=(0.0, 
+    -100.0), point2=(0.0, 100.0))
+mdb.models['Model-1'].sketches['__profile__'].FixedConstraint(entity=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].Line(point1=(5.0, 55.0), point2=(
+    20.0, 0.0))
+mdb.models['Model-1'].Part(dimensionality=THREE_D, name='Funnel', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Funnel'].BaseShellRevolve(angle=360.0, 
+    flipRevolveDirection=OFF, sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+del mdb.models['Model-1'].parts['Funnel']
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=200.0)
+mdb.models['Model-1'].sketches['__profile__'].ConstructionLine(point1=(0.0, 
+    -100.0), point2=(0.0, 100.0))
+mdb.models['Model-1'].sketches['__profile__'].FixedConstraint(entity=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].Line(point1=(2.5, 55.0), point2=(
+    20.0, 0.0))
+mdb.models['Model-1'].Part(dimensionality=THREE_D, name='Funnel', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Funnel'].BaseShellRevolve(angle=360.0, 
+    flipRevolveDirection=OFF, sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.models['Model-1'].Material(name='Punnel')
+mdb.models['Model-1'].materials['Punnel'].Elastic(table=((130340.0, 9655.0, 
+    0.29, 5586.0, 5586.0, 0.0), ), type=LAMINA)
+mdb.models['Model-1'].parts['Funnel'].CompositeLayup(description='', 
+    elementType=SHELL, name='Funnel', offsetType=MIDDLE_SURFACE, symmetric=
+    False, thicknessAssignment=FROM_SECTION)
+mdb.models['Model-1'].parts['Funnel'].compositeLayups['Funnel'].Section(
+    integrationRule=SIMPSON, poissonDefinition=DEFAULT, preIntegrate=OFF, 
+    temperature=GRADIENT, thicknessType=UNIFORM, useDensity=OFF)
+mdb.models['Model-1'].parts['Funnel'].compositeLayups['Funnel'].ReferenceOrientation(
+    additionalRotationType=ROTATION_NONE, angle=0.0, axis=AXIS_3, fieldName='', 
+    localCsys=None, orientationType=GLOBAL)
+mdb.models['Model-1'].parts['Funnel'].compositeLayups['Funnel'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='Punnel', numIntPoints=3, orientationType=
+    ANGLE_NEG45, plyName='Ply-1', region=Region(
+    faces=mdb.models['Model-1'].parts['Funnel'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), suppressed=False, thickness=0.127, thicknessType=
+    SPECIFY_THICKNESS)
+mdb.models['Model-1'].parts['Funnel'].compositeLayups['Funnel'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='Punnel', numIntPoints=3, orientationType=
+    ANGLE_NEG45, plyName='Ply-2', region=Region(
+    faces=mdb.models['Model-1'].parts['Funnel'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), suppressed=False, thickness=0.127, thicknessType=
+    SPECIFY_THICKNESS)
+mdb.models['Model-1'].parts['Funnel'].compositeLayups['Funnel'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='Punnel', numIntPoints=3, orientationType=
+    ANGLE_NEG45, plyName='Ply-3', region=Region(
+    faces=mdb.models['Model-1'].parts['Funnel'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), suppressed=False, thickness=0.127, thicknessType=
+    SPECIFY_THICKNESS)
+mdb.models['Model-1'].parts['Funnel'].compositeLayups['Funnel'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='Punnel', numIntPoints=3, orientationType=
+    ANGLE_NEG45, plyName='Ply-4', region=Region(
+    faces=mdb.models['Model-1'].parts['Funnel'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), suppressed=False, thickness=0.127, thicknessType=
+    SPECIFY_THICKNESS)
+mdb.models['Model-1'].parts['Funnel'].compositeLayups['Funnel'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='Punnel', numIntPoints=3, orientationType=
+    ANGLE_NEG45, plyName='Ply-5', region=Region(
+    faces=mdb.models['Model-1'].parts['Funnel'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), suppressed=False, thickness=0.127, thicknessType=
+    SPECIFY_THICKNESS)
+mdb.models['Model-1'].rootAssembly.DatumCsysByDefault(CARTESIAN)
+mdb.models['Model-1'].rootAssembly.Instance(dependent=OFF, name='Funnel-1', 
+    part=mdb.models['Model-1'].parts['Funnel'])
+mdb.models['Model-1'].StaticStep(name='Funnel Step', previous='Initial')
+mdb.models['Model-1'].fieldOutputRequests['F-Output-1'].setValues(
+    layupLocationMethod=SPECIFIED, layupNames=('Funnel-1.Funnel', ), 
+    outputAtPlyBottom=False, outputAtPlyMid=True, outputAtPlyTop=False, rebar=
+    EXCLUDE, variables=('S', 'PE', 'PEEQ', 'PEMAG', 'LE', 'RBANG', 'RBROT'))
+mdb.models['Model-1'].ShellEdgeLoad(createStepName='Funnel Step', 
+    distributionType=UNIFORM, field='', localCsys=None, magnitude=-2031.0, 
+    name='Load', region=Region(
+    side1Edges=mdb.models['Model-1'].rootAssembly.instances['Funnel-1'].edges.getSequenceFromMask(
+    mask=('[#1 ]', ), )), traction=TRANSVERSE)
+mdb.models['Model-1'].EncastreBC(createStepName='Initial', localCsys=None, 
+    name='Fixed', region=Region(
+    edges=mdb.models['Model-1'].rootAssembly.instances['Funnel-1'].edges.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+mdb.models['Model-1'].rootAssembly.seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].rootAssembly.instances['Funnel-1'].edges.getSequenceFromMask(
+    ('[#2 ]', ), ), number=40)
+mdb.models['Model-1'].rootAssembly.seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].rootAssembly.instances['Funnel-1'].edges.getSequenceFromMask(
+    ('[#4 ]', ), ), number=20)
+mdb.models['Model-1'].rootAssembly.generateMesh(regions=(
+    mdb.models['Model-1'].rootAssembly.instances['Funnel-1'], ))
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=75, memoryUnits=PERCENTAGE, model='Model-1', modelPrint=OFF, 
+    multiprocessingMode=DEFAULT, name='Job-1', nodalOutputPrecision=SINGLE, 
+    numCpus=1, numGPUs=0, queue=None, resultsFormat=ODB, scratch='', type=
+    ANALYSIS, userSubroutine='', waitHours=0, waitMinutes=0)
+mdb.jobs.changeKey(fromName='Job-1', toName='Funnel')
+mdb.jobs['Funnel'].submit(consistencyChecking=OFF)
+mdb.jobs['Funnel']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'clientHost': 'Soroosh', 'handle': 0, 'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': '1021 elements have zero transvere shear stiffness. The elements have been identified in element set ErrElemZeroTransShearStiff.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(WARNING, {'phase': BATCHPRE_PHASE, 
+    'message': 'STRAIN OUTPUT REQUEST LE IS NOT VALID FOR SOME ELEMENTS IN THIS ANALYSIS. THIS REQUEST IS SWITCHED TO THE STRAIN MEASURE, E.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(WARNING, {'phase': BATCHPRE_PHASE, 
+    'message': 'STRAIN OUTPUT REQUEST LE IS NOT VALID FOR SOME ELEMENTS IN THIS ANALYSIS. THIS REQUEST IS SWITCHED TO THE STRAIN MEASURE, E.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(WARNING, {'phase': BATCHPRE_PHASE, 
+    'message': '4 elements are curved/warped. The angle subtended between the average element normal and a nodal normal exceeds 10 degrees. Mesh refinement is recommended. The elements have been identified in element set WarnElemWarped.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ODB_FILE, {'phase': BATCHPRE_PHASE, 
+    'file': 'E:\\installed softwares\\SIMULIA\\Directory\\Funnel.odb', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ABORTED, {'phase': BATCHPRE_PHASE, 
+    'message': 'Analysis phase failed due to errors', 'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ERROR, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(JOB_ABORTED, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel'].submit(consistencyChecking=OFF)
+mdb.jobs['Funnel']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'clientHost': 'Soroosh', 'handle': 0, 'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': '1021 elements have zero transvere shear stiffness. The elements have been identified in element set ErrElemZeroTransShearStiff.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(WARNING, {'phase': BATCHPRE_PHASE, 
+    'message': 'STRAIN OUTPUT REQUEST LE IS NOT VALID FOR SOME ELEMENTS IN THIS ANALYSIS. THIS REQUEST IS SWITCHED TO THE STRAIN MEASURE, E.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(WARNING, {'phase': BATCHPRE_PHASE, 
+    'message': 'STRAIN OUTPUT REQUEST LE IS NOT VALID FOR SOME ELEMENTS IN THIS ANALYSIS. THIS REQUEST IS SWITCHED TO THE STRAIN MEASURE, E.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(WARNING, {'phase': BATCHPRE_PHASE, 
+    'message': '4 elements are curved/warped. The angle subtended between the average element normal and a nodal normal exceeds 10 degrees. Mesh refinement is recommended. The elements have been identified in element set WarnElemWarped.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ODB_FILE, {'phase': BATCHPRE_PHASE, 
+    'file': 'E:\\installed softwares\\SIMULIA\\Directory\\Funnel.odb', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ABORTED, {'phase': BATCHPRE_PHASE, 
+    'message': 'Analysis phase failed due to errors', 'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(ERROR, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Funnel'})
+mdb.jobs['Funnel']._Message(JOB_ABORTED, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Funnel'})
+# Save by hp on 2018_09_23-14.59.05; build 6.14-2 2014_08_22-18.30.46 134497
