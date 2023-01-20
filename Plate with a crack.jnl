@@ -1,0 +1,5 @@
+# Save by Soroosh on 2018_11_11-11.56.47; build 2018 2017_11_07-20.51.41 127140
+from abaqus import *
+upgradeMdb('E:/ABAQUS/4.Plate with a crack/Plate with a crack-6.14-2.cae', 
+    'E:/ABAQUS/4.Plate with a crack/Plate with a crack.cae')
+# Save by Soroosh on 2018_11_11-11.56.47; build 2018 2017_11_07-20.51.41 127140
