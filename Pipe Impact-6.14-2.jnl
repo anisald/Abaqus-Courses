@@ -1,0 +1,49 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=25.0)
+mdb.models['Model-1'].sketches['__profile__'].CircleByCenterPerimeter(center=(
+    0.0, 0.0), point1=(0.0, 3.25))
+mdb.models['Model-1'].Part(dimensionality=THREE_D, name='Pipe_Fixed', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Pipe_Fixed'].BaseShellExtrude(depth=25.0, sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=25.0)
+mdb.models['Model-1'].sketches['__profile__'].CircleByCenterPerimeter(center=(
+    0.0, 0.0), point1=(3.25, 0.0))
+mdb.models['Model-1'].Part(dimensionality=THREE_D, name='Pipe-impacting', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Pipe-impacting'].BaseShellExtrude(depth=25.0, 
+    sketch=mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.models['Model-1'].parts['Pipe-impacting'].regenerate()
+mdb.models['Model-1'].ConstrainedSketch(name='__edit__', objectToCopy=
+    mdb.models['Model-1'].parts['Pipe-impacting'].features['Shell extrude-1'].sketch)
+mdb.models['Model-1'].parts['Pipe-impacting'].projectReferencesOntoSketch(
+    filter=COPLANAR_EDGES, sketch=mdb.models['Model-1'].sketches['__edit__'], 
+    upToFeature=
+    mdb.models['Model-1'].parts['Pipe-impacting'].features['Shell extrude-1'])
+mdb.models['Model-1'].sketches['__edit__'].autoTrimCurve(curve1=
+    mdb.models['Model-1'].sketches['__edit__'].geometry[2], point1=(
+    -2.99026250839233, 1.3116626739502))
+mdb.models['Model-1'].sketches['__edit__'].ArcByStartEndTangent(point1=(0.0, 
+    3.25), point2=(0.0, -3.25), vector=(1.0, 0.0))
+mdb.models['Model-1'].parts['Pipe-impacting'].features['Shell extrude-1'].setValues(
+    sketch=mdb.models['Model-1'].sketches['__edit__'])
+del mdb.models['Model-1'].sketches['__edit__']
+mdb.models['Model-1'].parts['Pipe-impacting'].features['Shell extrude-1'].setValues(
+    depth=50.0)
+mdb.models['Model-1'].parts['Pipe-impacting'].regenerate()
+# Save by hp on 2018_09_26-17.24.58; build 6.14-2 2014_08_22-18.30.46 134497
