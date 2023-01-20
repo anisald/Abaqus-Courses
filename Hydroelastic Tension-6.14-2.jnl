@@ -1,0 +1,426 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.openAcis('E:/ABAQUS/Hydroelastic Tension Project/Hydroelastic Tension.sat', 
+    scaleFromFile=OFF)
+mdb.models['Model-1'].PartFromGeometryFile(combine=False, dimensionality=
+    THREE_D, geometryFile=mdb.acis, name='Hydroelastic Tension-1', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].PartFromGeometryFile(bodyNum=2, combine=False, 
+    dimensionality=THREE_D, geometryFile=mdb.acis, name=
+    'Hydroelastic Tension-2', type=DEFORMABLE_BODY)
+mdb.models.changeKey(fromName='Model-1', toName='Hydroelastic Tension')
+mdb.models['Hydroelastic Tension'].parts['Hydroelastic Tension-2'].ReferencePoint(
+    point=
+    mdb.models['Hydroelastic Tension'].parts['Hydroelastic Tension-2'].vertices[2])
+mdb.models['Hydroelastic Tension'].Material(name='Rubber')
+mdb.models['Hydroelastic Tension'].materials['Rubber'].Hyperelastic(
+    materialType=ISOTROPIC, table=((0.17, 0.01, 0.0), ), testData=OFF, type=
+    MOONEY_RIVLIN, volumetricResponse=VOLUMETRIC_DATA)
+mdb.models['Hydroelastic Tension'].HomogeneousShellSection(idealization=
+    NO_IDEALIZATION, integrationRule=SIMPSON, material='Rubber', name=
+    'Section-1', numIntPts=5, poissonDefinition=DEFAULT, preIntegrate=OFF, 
+    temperature=GRADIENT, thickness=1.0, thicknessField='', thicknessModulus=
+    None, thicknessType=UNIFORM, useDensity=OFF)
+mdb.models['Hydroelastic Tension'].sections.changeKey(fromName='Section-1', 
+    toName='Rubber')
+mdb.models['Hydroelastic Tension'].parts['Hydroelastic Tension-1'].SectionAssignment(
+    offset=0.0, offsetField='', offsetType=MIDDLE_SURFACE, region=Region(
+    faces=mdb.models['Hydroelastic Tension'].parts['Hydroelastic Tension-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), sectionName='Rubber', thicknessAssignment=
+    FROM_SECTION)
+mdb.models['Hydroelastic Tension'].rootAssembly.DatumCsysByDefault(CARTESIAN)
+mdb.models['Hydroelastic Tension'].rootAssembly.Instance(dependent=OFF, name=
+    'Hydroelastic Tension-1-1', part=
+    mdb.models['Hydroelastic Tension'].parts['Hydroelastic Tension-1'])
+mdb.models['Hydroelastic Tension'].rootAssembly.Instance(dependent=OFF, name=
+    'Hydroelastic Tension-2-1', part=
+    mdb.models['Hydroelastic Tension'].parts['Hydroelastic Tension-2'])
+mdb.models['Hydroelastic Tension'].StaticStep(initialInc=0.01, maxNumInc=100000
+    , name='Rubber', nlgeom=ON, previous='Initial')
+mdb.models['Hydroelastic Tension'].ContactProperty('IntProp-1')
+mdb.models['Hydroelastic Tension'].interactionProperties['IntProp-1'].TangentialBehavior(
+    dependencies=0, directionality=ISOTROPIC, elasticSlipStiffness=None, 
+    formulation=PENALTY, fraction=0.005, maximumElasticSlip=FRACTION, 
+    pressureDependency=OFF, shearStressLimit=None, slipRateDependency=OFF, 
+    table=((0.2, ), ), temperatureDependency=OFF)
+mdb.models['Hydroelastic Tension'].SurfaceToSurfaceContactStd(adjustMethod=NONE
+    , clearanceRegion=None, createStepName='Initial', datumAxis=None, 
+    initialClearance=OMIT, interactionProperty='IntProp-1', master=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )), name='Int-1', slave=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), sliding=FINITE, thickness=ON)
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#3 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(bodyRegion=Region(
+    faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#3 ]', ), )), name='Constraint-1', refPointRegion=Region(
+    referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(bodyRegion=None, name=
+    'Constraint-1', refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(bodyRegion=None, name=
+    'Constraint-1', refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(bodyRegion=None, name=
+    'Constraint-1', refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Edges=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].edges.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].rootAssembly.Surface(name='Surf-3', 
+    side1Faces=
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    ('[#2 ]', ), ))
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=
+    mdb.models['Hydroelastic Tension'].rootAssembly.surfaces['Surf-3'])
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Edges=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'].edges.getSequenceFromMask(
+    mask=('[#1 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Edges=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].edges.getSequenceFromMask(
+    mask=('[#4 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+del mdb.models['Hydroelastic Tension'].interactions['Int-1']
+del mdb.models['Hydroelastic Tension'].interactionProperties['IntProp-1']
+mdb.models['Hydroelastic Tension'].ContactProperty('IntProp-1')
+mdb.models['Hydroelastic Tension'].interactionProperties['IntProp-1'].TangentialBehavior(
+    dependencies=0, directionality=ISOTROPIC, elasticSlipStiffness=None, 
+    formulation=PENALTY, fraction=0.005, maximumElasticSlip=FRACTION, 
+    pressureDependency=OFF, shearStressLimit=None, slipRateDependency=OFF, 
+    table=((0.2, ), ), temperatureDependency=OFF)
+mdb.models['Hydroelastic Tension'].SurfaceToSurfaceContactStd(adjustMethod=NONE
+    , clearanceRegion=None, createStepName='Initial', datumAxis=None, 
+    initialClearance=OMIT, interactionProperty='IntProp-1', master=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), name='Int-1', slave=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )), sliding=FINITE, thickness=ON)
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), ), 
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#3 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#3 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].rootAssembly.translate(instanceList=(
+    'Hydroelastic Tension-2-1', ), vector=(0.0, 0.0, -1.0))
+mdb.models['Hydroelastic Tension'].rootAssembly.translate(instanceList=(
+    'Hydroelastic Tension-2-1', ), vector=(0.0, 0.0, 1.0))
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(name='Constraint-1', 
+    refPointRegion=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side2Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(bodyRegion=Region(
+    faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#3 ]', ), )), name='Constraint-1', refPointRegion=Region(
+    referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#1 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(bodyRegion=Region(
+    faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#3 ]', ), )), name='Constraint-1', refPointRegion=Region(
+    referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].RigidBody(bodyRegion=Region(
+    faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#3 ]', ), )), name='Constraint-1', refPointRegion=Region(
+    referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), surfaceRegion=None)
+mdb.models['Hydroelastic Tension'].constraints['Constraint-1'].setValues(
+    surfaceRegion=Region(
+    side1Faces=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].faces.getSequenceFromMask(
+    mask=('[#2 ]', ), )))
+#* The region corresponding to the analytical surface
+#*  should belong to an analytical rigid part instance.
+mdb.models['Hydroelastic Tension'].EncastreBC(createStepName='Initial', 
+    localCsys=None, name='Fixed-end', region=Region(
+    edges=mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'].edges.getSequenceFromMask(
+    mask=('[#1 ]', ), )))
+mdb.models['Hydroelastic Tension'].DisplacementBC(amplitude=UNSET, 
+    createStepName='Rubber', distributionType=UNIFORM, fieldName='', fixed=OFF, 
+    localCsys=None, name='Move', region=Region(referencePoints=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-2-1'].referencePoints[2], 
+    )), u1=0.0, u2=0.0, u3=-10.0, ur1=0.0, ur2=0.0, ur3=0.0)
+mdb.models['Hydroelastic Tension'].rootAssembly.seedPartInstance(
+    deviationFactor=0.1, minSizeFactor=0.1, regions=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'], 
+    ), size=2.0)
+mdb.models['Hydroelastic Tension'].rootAssembly.generateMesh(regions=(
+    mdb.models['Hydroelastic Tension'].rootAssembly.instances['Hydroelastic Tension-1-1'], 
+    ))
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Hydroelastic Tension', 
+    modelPrint=OFF, multiprocessingMode=DEFAULT, name='Rubber', 
+    nodalOutputPrecision=SINGLE, numCpus=1, numGPUs=0, queue=None, 
+    resultsFormat=ODB, scratch='', type=ANALYSIS, userSubroutine='', waitHours=
+    0, waitMinutes=0)
+mdb.jobs['Rubber'].submit(consistencyChecking=OFF)
+mdb.jobs['Rubber']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'clientHost': 'Soroosh', 'handle': 0, 'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'in keyword *RIGIDBODY, file "Rubber.inp", line 1985: Unknown assembly set _PICKEDSET66', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ODB_FILE, {'phase': BATCHPRE_PHASE, 
+    'file': 'E:\\installed softwares\\SIMULIA\\Directory\\Rubber.odb', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'Failed to locate set "ASSEMBLY__PICKEDSET66".', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ABORTED, {'phase': BATCHPRE_PHASE, 
+    'message': 'Analysis phase failed due to errors', 'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(JOB_ABORTED, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber'].submit(consistencyChecking=OFF)
+mdb.jobs['Rubber']._Message(STARTED, {'phase': BATCHPRE_PHASE, 
+    'clientHost': 'Soroosh', 'handle': 0, 'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'in keyword *RIGIDBODY, file "Rubber.inp", line 1985: Unknown assembly set _PICKEDSET66', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'THE MASTER SURFACE ASSEMBLY__PICKEDSURF41 DOES NOT EXIST.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'ELEMENT SET ASSEMBLY__PICKEDSET66 HAS NOT BEEN DEFINED', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ODB_FILE, {'phase': BATCHPRE_PHASE, 
+    'file': 'E:\\installed softwares\\SIMULIA\\Directory\\Rubber.odb', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {'phase': BATCHPRE_PHASE, 
+    'message': 'Failed to locate set "ASSEMBLY__PICKEDSET66".', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ABORTED, {'phase': BATCHPRE_PHASE, 
+    'message': 'Analysis phase failed due to errors', 'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(ERROR, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Rubber'})
+mdb.jobs['Rubber']._Message(JOB_ABORTED, {
+    'message': 'Analysis Input File Processor exited with an error.', 
+    'jobName': 'Rubber'})
+# Save by hp on 2018_09_19-16.18.02; build 6.14-2 2014_08_22-18.30.46 134497
